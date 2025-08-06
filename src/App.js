@@ -15,7 +15,7 @@ export default function App() {
     const audioAnalyzer = () => {
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const analyzer = audioCtx.createAnalyser();
-        analyzer.fftSize = 2048;
+        analyzer.fftSize = 256;
 
         const bufferLength = analyzer.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);

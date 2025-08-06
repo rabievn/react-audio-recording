@@ -1,34 +1,36 @@
-import { useRef, useEffect } from "react";
-import useSize from "./useSize";
+import {useRef, useEffect} from "react";
 
 function animateBars(analyser, canvas, canvasCtx, dataArray, bufferLength) {
     analyser.getByteFrequencyData(dataArray);
 
-    canvasCtx.fillStyle = "#000";
+    const centerY = canvas.height / 2;
+    const HEIGHT = canvas.height / 2; // Max height to fill from center out
 
-    const HEIGHT = canvas.height / 2;
+    const barWidth = Math.ceil(canvas.width / bufferLength) * 0.5;
 
-    var barWidth = Math.ceil(canvas.width / bufferLength) * 2.5;
-    let barHeight;
     let x = 0;
 
-    for (var i = 0; i < bufferLength; i++) {
-        barHeight = (dataArray[i] / 255) * HEIGHT;
-        const blueShade = Math.floor((dataArray[i] / 255) * 5); // generate a shade of blue based on the audio input
-        const blueHex = ["#61dafb", "#5ac8fa", "#50b6f5", "#419de6", "#20232a"][
-            blueShade
-            ]; // use react logo blue shades
-        canvasCtx.fillStyle = blueHex;
-        canvasCtx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+    // Create gradient once
+    const gradient = canvasCtx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#8595E5'); // Top
+    gradient.addColorStop(1, '#42C5EB'); // Bottom
+    canvasCtx.fillStyle = gradient;
 
-        x += barWidth + 1;
+    for (let i = 0; i < bufferLength; i++) {
+        const barHeight = (dataArray[i] / 255) * HEIGHT;
+
+        // Draw bar up and down from centerY
+        // (x, centerY - barHeight / 2, barWidth, barHeight)
+        canvasCtx.fillRect(x, centerY - barHeight / 2, barWidth, barHeight);
+
+        x += barWidth;
     }
 }
 
-const WaveForm = ({ analyzerData }) => {
+
+const WaveForm = ({analyzerData}) => {
     const canvasRef = useRef(null);
-    const { dataArray, analyzer, bufferLength } = analyzerData;
-    const [width, height] = useSize();
+    const {dataArray, analyzer, bufferLength} = analyzerData;
 
     const draw = (dataArray, analyzer, bufferLength) => {
         const canvas = canvasRef.current;
@@ -52,15 +54,9 @@ const WaveForm = ({ analyzerData }) => {
 
     return (
         <canvas
-            style={{
-                position: "absolute",
-                top: "0",
-                left: "0",
-                zIndex: "-10"
-            }}
             ref={canvasRef}
-            width={width}
-            height={height}
+            width={1000}
+            height={200}
         />
     );
 };
