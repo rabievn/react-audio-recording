@@ -1,6 +1,8 @@
-import {useEffect, useRef, useState} from "react";
 import "./App.css";
-import WaveForm from "./WaveForm";
+import FullWave from "./components/FullWave";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import WaveForm from "./components/WaveForm";
+
 
 export default function App() {
     const [analyzerData, setAnalyzerData] = useState(null);
@@ -86,6 +88,8 @@ export default function App() {
         }
     };
 
+    const renderWave = useCallback(() => <FullWave recordedUrl={recordedUrl}/>, [recordedUrl]);
+
     return (<div className="App">
         <h2>🎤 Audio Recorder with Custom Waveform</h2>
         <div style={{marginBottom: 20}}>
@@ -110,5 +114,7 @@ export default function App() {
             <input type="file" accept="audio/*" onChange={onFileChange}/>
             <audio src={recordedUrl ?? ""} controls ref={audioElmRef}/>
         </div>
+        <h2>Full Waveform</h2>
+        {renderWave()}
     </div>);
 }
