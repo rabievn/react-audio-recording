@@ -1,7 +1,7 @@
 import "./App.css";
-import FullWave from "./components/FullWave";
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import WaveForm from "./components/WaveForm";
+import CustomAudioPlayer from "./components/CustomAudioPlayer";
 
 
 export default function App() {
@@ -33,6 +33,8 @@ export default function App() {
 
     const onFileChange = (e) => {
         const file = e.target.files?.[0];
+
+        console.log(file, '    file')
         if (!file) return;
         setRecordedUrl(URL.createObjectURL(file));
         audioAnalyzer();
@@ -63,6 +65,8 @@ export default function App() {
             };
             mediaRecorder.current.onstop = () => {
                 const recordedBlob = new Blob(chunks.current, {type: 'audio/webm'});
+
+                console.log(recordedBlob, ' recordedBlob')
                 const url = URL.createObjectURL(recordedBlob);
                 setRecordedUrl(url);
                 chunks.current = [];
@@ -88,7 +92,10 @@ export default function App() {
         }
     };
 
-    const renderWave = useCallback(() => <FullWave recordedUrl={recordedUrl}/>, [recordedUrl]);
+    // const renderWave = useCallback(() => <FullWave recordedUrl={recordedUrl}/>, [recordedUrl]);
+    const renderSVGWave = useCallback(() => <CustomAudioPlayer recordedUrl={recordedUrl} width={400}
+                                                               height={50}/>, [recordedUrl]);
+
 
     return (<div className="App">
         <h2>🎤 Audio Recorder with Custom Waveform</h2>
@@ -114,7 +121,9 @@ export default function App() {
             <input type="file" accept="audio/*" onChange={onFileChange}/>
             <audio src={recordedUrl ?? ""} controls ref={audioElmRef}/>
         </div>
-        <h2>Full Waveform</h2>
-        {renderWave()}
+        <h2>SVG Full Waveform</h2>
+        {renderSVGWave()}
+
+
     </div>);
 }

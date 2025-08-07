@@ -36,5 +36,69 @@
     transform: rotate(360deg);
   }
 }
+.audio-player {
+  margin: 32px auto;
+  padding: 24px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.audio-player__waveform-container {
+  width: 100%;
+  cursor: pointer;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.audio-player__waveform-svg {
+  width: 100%;
+  height: auto;
+  background: none;
+  border-radius: 8px;
+}
+
+.audio-player__waveform-bg {
+  /* No extra style needed: just gray line */
+}
+
+.audio-player__waveform-progress {
+  /* This can be bold or glowy if you wish */
+}
+
+.audio-player__controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+button, input {
+  &:disabled{
+    opacity: 0.5;
+  }
+  background: #42C5EB;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.audio-player__play:hover {
+  background: #349edb;
+}
+
+.audio-player__time {
+  color: #ccc;
+  min-width: 60px;
+  font-family: monospace;
+}
+
 
 
