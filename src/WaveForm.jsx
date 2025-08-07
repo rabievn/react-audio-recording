@@ -3,10 +3,8 @@ import {useRef, useEffect} from "react";
 function animateBars(analyser, canvas, canvasCtx, dataArray, bufferLength) {
     analyser.getByteFrequencyData(dataArray);
 
-    const centerY = canvas.height / 2;
-    const HEIGHT = canvas.height / 2; // Max height to fill from center out
-
-    const barWidth = Math.ceil(canvas.width / bufferLength) * 0.5;
+    const HEIGHT = canvas.height;
+    const barWidth = Math.ceil(canvas.width / bufferLength);
 
     let x = 0;
 
@@ -18,10 +16,9 @@ function animateBars(analyser, canvas, canvasCtx, dataArray, bufferLength) {
 
     for (let i = 0; i < bufferLength; i++) {
         const barHeight = (dataArray[i] / 255) * HEIGHT;
-
-        // Draw bar up and down from centerY
-        // (x, centerY - barHeight / 2, barWidth, barHeight)
-        canvasCtx.fillRect(x, centerY - barHeight / 2, barWidth, barHeight);
+        // Place bar so it is always vertically centered, filling from top to bottom as data increases
+        const y = (HEIGHT - barHeight) / 2;
+        canvasCtx.fillRect(x, y, barWidth, barHeight);
 
         x += barWidth;
     }
@@ -39,9 +36,9 @@ const WaveForm = ({analyzerData}) => {
 
         const animate = () => {
             requestAnimationFrame(animate);
-            // eslint-disable-next-line no-self-assign
+            // Clear canvas
             canvas.width = canvas.width;
-            canvasCtx.translate(0, canvas.offsetHeight / 2 - 115);
+            // No translate needed!
             animateBars(analyzer, canvas, canvasCtx, dataArray, bufferLength);
         };
 
@@ -55,8 +52,8 @@ const WaveForm = ({analyzerData}) => {
     return (
         <canvas
             ref={canvasRef}
-            width={1000}
-            height={200}
+            width={275}
+            height={80}
         />
     );
 };
