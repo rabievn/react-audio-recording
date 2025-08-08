@@ -1,104 +1,190 @@
+:root {
+    --bg-color: #1e1e1e;
+    --card-bg: #1e1e1e;
+    --text-color: #f5f5f5;
+    --accent: #42c5eb;
+    --accent-hover: #2bb0d7;
+    --disabled: #444;
+    --error-color: #ff4d4d;
+    --wave-bg: #7f8c8d;
+    --wave-progress-start: #8595e5;
+    --wave-progress-end: #42c5eb;
+}
+
+/* ==========================
+   Global Resets for Buttons & Inputs
+========================== */
+* {
+    padding: 0;
+    margin: 0;
+}
+
+button,
+input[type='file'],
+input[type='button'],
+input[type='submit'] {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover:not(:disabled),
+input[type='file']:hover:not(:disabled) {
+    background-color: var(--accent-hover);
+}
+
+button:disabled,
+input:disabled {
+    background-color: var(--disabled);
+    cursor: not-allowed;
+}
+
+audio {
+    display: none;
+}
+
+/* ==========================
+   App Layout
+========================== */
 .App {
-  text-align: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: scroll;
+    overflow-x: hidden;
+    text-align: center;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* ==========================
+   Headings
+========================== */
+.app__title,
+.app__heading,
+.app__subtitle {
+    color: var(--text-color);
+    margin-bottom: 1rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* ==========================
+   Control Buttons
+========================== */
+.app__controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* ==========================
+   Error Message
+========================== */
+.app__error {
+    color: var(--error-color);
+    font-weight: bold;
+    margin-bottom: 1rem;
 }
 
-.App-link {
-  color: #61dafb;
+/* ==========================
+   Audio Controls
+========================== */
+.app__audio-controls,
+.audio-player__controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.app__file-input {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid #333;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
 }
+
+.app__audio {
+    width: 100%;
+    max-width: 300px;
+    background-color: var(--card-bg);
+    border-radius: 6px;
+}
+
+/* ==========================
+   Audio Player Styling
+========================== */
 .audio-player {
-  margin: 32px auto;
-  padding: 24px;
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
+    margin: 32px auto;
+    padding: 24px;
+    max-width: 100%;
+    background: var(--card-bg);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.record-player {
+    padding-top: 50px;
 }
 
 .audio-player__waveform-container {
-  width: 100%;
-  cursor: pointer;
-  margin-bottom: 24px;
-  border-radius: 8px;
-  overflow: hidden;
+    width: 100%;
+    cursor: pointer;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .audio-player__waveform-svg {
-  width: 100%;
-  height: auto;
-  background: none;
-  border-radius: 8px;
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    background: none;
 }
 
+/* Optional if you want the wave to look softer */
 .audio-player__waveform-bg {
-  /* No extra style needed: just gray line */
+    stroke: var(--wave-bg);
 }
 
 .audio-player__waveform-progress {
-  /* This can be bold or glowy if you wish */
+    stroke: url(#waveGradientPlay);
+    filter: drop-shadow(0 0 2px var(--wave-progress-end));
 }
 
-.audio-player__controls {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-button, input {
-  &:disabled{
-    opacity: 0.5;
-  }
-  background: #42C5EB;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 18px;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.2s;
+/* Play Button Custom Style */
+.audio-player__play {
+    padding: 0.6rem 1.2rem;
+    font-weight: bold;
+    border-radius: 8px;
+    background-color: var(--accent);
+    color: #fff;
+    font-size: 1rem;
+    transition: background-color 0.3s;
 }
 
 .audio-player__play:hover {
-  background: #349edb;
+    background: var(--accent-hover);
 }
 
 .audio-player__time {
-  color: #ccc;
-  min-width: 60px;
-  font-family: monospace;
+    color: #ccc;
+    font-family: monospace;
+    font-size: 0.95rem;
+    min-width: 60px;
 }
-
-
-

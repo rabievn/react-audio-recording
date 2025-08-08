@@ -1,47 +1,17 @@
-import "./App.css";
-import React, {useCallback, useEffect, useRef, useState} from "react";
-import WaveForm from "./components/WaveForm";
-import CustomAudioPlayer from "./components/CustomAudioPlayer";
-
+import './App.css';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import CustomAudioPlayer from './components/CustomAudioPlayer';
+import AudioVisualizer from './components/AudioVisualizer';
 
 export default function App() {
-    const [analyzerData, setAnalyzerData] = useState(null);
-    const audioElmRef = useRef(null);
     const [recordedUrl, setRecordedUrl] = useState('');
     const [isRecording, setIsRecording] = useState(false);
     const [error, setError] = useState('');
+
     const mediaStream = useRef(null);
     const mediaRecorder = useRef(null);
     const chunks = useRef([]);
 
-    const audioAnalyzer = () => {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const analyzer = audioCtx.createAnalyser();
-        analyzer.fftSize = 256;
-
-        const bufferLength = analyzer.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
-        const source = audioCtx.createMediaElementSource(audioElmRef.current);
-        source.connect(analyzer);
-        source.connect(audioCtx.destination);
-        source.onended = () => {
-            source.disconnect();
-        };
-
-        setAnalyzerData({analyzer, bufferLength, dataArray});
-    };
-
-    const onFileChange = (e) => {
-        const file = e.target.files?.[0];
-
-        console.log(file, '    file')
-        if (!file) return;
-        setRecordedUrl(URL.createObjectURL(file));
-        audioAnalyzer();
-    };
-
-
-    // Clean up blob URLs to avoid memory leaks
     useEffect(() => {
         return () => {
             if (recordedUrl && recordedUrl.startsWith('blob:')) {
@@ -59,14 +29,10 @@ export default function App() {
 
             chunks.current = [];
             mediaRecorder.current.ondataavailable = (e) => {
-                if (e.data.size > 0) {
-                    chunks.current.push(e.data);
-                }
+                if (e.data.size > 0) chunks.current.push(e.data);
             };
             mediaRecorder.current.onstop = () => {
                 const recordedBlob = new Blob(chunks.current, {type: 'audio/webm'});
-
-                console.log(recordedBlob, ' recordedBlob')
                 const url = URL.createObjectURL(recordedBlob);
                 setRecordedUrl(url);
                 chunks.current = [];
@@ -86,44 +52,43 @@ export default function App() {
             mediaRecorder.current.stop();
         }
         if (mediaStream.current) {
-            mediaStream.current.getTracks().forEach((track) => {
-                track.stop();
-            });
+            mediaStream.current.getTracks().forEach((track) => track.stop());
+            mediaStream.current = null;
         }
     };
 
-    // const renderWave = useCallback(() => <FullWave recordedUrl={recordedUrl}/>, [recordedUrl]);
-    const renderSVGWave = useCallback(() => <CustomAudioPlayer recordedUrl={recordedUrl} width={400}
-                                                               height={50}/>, [recordedUrl]);
+    const renderSVGWave = useCallback(() => (
+        <CustomAudioPlayer recordedUrl={recordedUrl} width={400} height={50}/>), [recordedUrl]);
 
+    const renderAudioVisualizer = useCallback(() => (<AudioVisualizer
+        recordedUrl={recordedUrl}
+        onRecordedUrlChange={setRecordedUrl}
+    />), [recordedUrl]);
 
-    return (<div className="App">
-        <h2>🎤 Audio Recorder with Custom Waveform</h2>
-        <div style={{marginBottom: 20}}>
-            <button onClick={startRecording} disabled={isRecording}>
+    return (<div className="App dark">
+        <h2 className="app__title">🎤 Audio Recorder with Custom Waveform</h2>
+
+        <div className="app__controls">
+            <button
+                className="app__button"
+                onClick={startRecording}
+                disabled={isRecording}
+            >
                 {isRecording ? 'Recording...' : 'Start Recording'}
             </button>
-            <button onClick={stopRecording} disabled={!isRecording}>
+            <button
+                className="app__button"
+                onClick={stopRecording}
+                disabled={!isRecording}
+            >
                 Stop Recording
             </button>
         </div>
-        {error && (<div style={{color: 'red', marginBottom: 20}}>
-            {error}
-        </div>)}
 
-        <h1>Audio Visualizer</h1>
-        {analyzerData && <WaveForm analyzerData={analyzerData}/>}
-        <div
-            style={{
-                height: 40, display: "flex", justifyContent: "space-around", alignItems: "center"
-            }}
-        >
-            <input type="file" accept="audio/*" onChange={onFileChange}/>
-            <audio src={recordedUrl ?? ""} controls ref={audioElmRef}/>
-        </div>
-        <h2>SVG Full Waveform</h2>
+        {error && <div className="app__error">{error}</div>}
+        {renderAudioVisualizer()}
+
+        <h2 className="app__subtitle">SVG Full Waveform</h2>
         {renderSVGWave()}
-
-
     </div>);
 }

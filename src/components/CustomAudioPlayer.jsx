@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import "../App.css";
+import formatTime from '../utils/formatTime'
 
-// Helper: decode audio and extract waveform samples
 async function extractWaveform(url, sampleCount = 400) {
     if (!url) return [];
     const res = await fetch(url);
@@ -29,7 +29,6 @@ export default function CustomAudioPlayer({recordedUrl, width = 600, height = 12
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const audioRef = useRef(null);
-
 
     useEffect(() => {
         let running = true;
@@ -170,9 +169,3 @@ export default function CustomAudioPlayer({recordedUrl, width = 600, height = 12
     );
 }
 
-function formatTime(time) {
-    if (!isFinite(time)) return "0:00";
-    const m = Math.floor(time / 60);
-    const s = Math.floor(time % 60);
-    return `${m}:${s.toString().padStart(2, "0")}`;
-}
